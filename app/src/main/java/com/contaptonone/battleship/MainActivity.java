@@ -69,10 +69,11 @@ public class MainActivity extends Activity
     private TurnBasedMatch mTurnBasedMatch;
 
     // Local convenience pointers
-    public TextView mDataView;
     public TextView mTurnTextView;
     public NumberPicker alpha;
     public NumberPicker numeric;
+    String[] alphaOptions = new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" };
+    String[] numericOptions = new String[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10" };
 
     private AlertDialog mAlertDialog;
 
@@ -116,13 +117,20 @@ public class MainActivity extends Activity
         // Setup signin and signout buttons
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.sign_in_button).setOnClickListener(this);
-
+        //populating number pickers
         alpha = (NumberPicker) findViewById(R.id.alpha);
-        alpha.setDisplayedValues( new String[] { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J" } );
+        alpha.setMinValue(0);
+        alpha.setMaxValue(alphaOptions.length - 1);
+        alpha.setDisplayedValues(alphaOptions);
+        alpha.setWrapSelectorWheel(false);
+
+
         numeric = (NumberPicker) findViewById(R.id.numeric);
         numeric.setMinValue(0);
-        numeric.setMinValue(10);
-        mDataView = ((TextView) findViewById(R.id.data_view));
+        numeric.setMaxValue(numericOptions.length - 1);
+        numeric.setDisplayedValues(numericOptions);
+        numeric.setWrapSelectorWheel(false);
+
         mTurnTextView = ((TextView) findViewById(R.id.turn_counter_view));
     }
 
@@ -299,8 +307,8 @@ public class MainActivity extends Activity
         String nextParticipantId = getNextParticipantId();
         // Create the next turn
         mTurnData.turnCounter += 1;
-        mTurnData.data = String.valueOf(alpha.getValue()) + String.valueOf(numeric.getValue());
-        Log.d("onDoneClicked#","Value of user inputted data: " + mDataView.getText().toString());
+        mTurnData.data = alphaOptions[alpha.getValue()] + "," + numericOptions[numeric.getValue()];
+        Log.d("onDoneClicked#","Value of user inputted data: " + mTurnData.data);
         showSpinner();
 
         Games.TurnBasedMultiplayer.takeTurn(mGoogleApiClient, mMatch.getMatchId(),
@@ -351,7 +359,6 @@ public class MainActivity extends Activity
     public void setGameplayUI() {
         isDoingTurn = true;
         setViewVisibility();
-        mDataView.setText(mTurnData.data);
         mTurnTextView.setText("Turn " + mTurnData.turnCounter);
     }
 
